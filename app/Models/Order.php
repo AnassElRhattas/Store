@@ -16,7 +16,8 @@ class Order extends Model
         'total_amount',
         'shipping_address',
         'payment_method',
-        'status'
+        'status',
+        'pdf_path'
     ];
 
     public function user(): BelongsTo
