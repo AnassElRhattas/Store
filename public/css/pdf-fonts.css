@@ -1,0 +1,7 @@
+@font-face {
+    font-family: 'Amiri';
+    src: url('../fonts/Amiri-Regular.ttf') format('truetype'),
+         url('../fonts/Amiri-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

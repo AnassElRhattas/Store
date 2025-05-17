@@ -17,7 +17,7 @@
                   <div class="flex items-center justify-between">
                     <div class="flex-1">
                       <h3 class="text-sm font-medium">طلب #{{ order.id }}</h3>
-                      <p class="text-sm text-gray-500">{{ order.user.name }}</p>
+                      <p class="text-sm text-gray-500">{{ order.user.name }} {{ order.user.surname }}</p>
                       <p class="text-sm text-gray-500">{{ order.created_at }}</p>
                       <div class="mt-2">
                         <div v-for="item in order.items" :key="item.id" class="flex justify-between text-sm">
@@ -25,7 +25,13 @@
                           <span>x{{ item.quantity }}</span>
                         </div>
                       </div>
-                      <p class="mt-2 text-sm font-medium">المجموع: {{ order.total }} ريال</p>
+                      <p class="mt-2 text-sm font-medium">المجموع: {{ order.total_amount }} درهم</p>
+                      <button
+                        @click="showOrderDetails(order)"
+                        class="mt-2 text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        عرض التفاصيل
+                      </button>
                     </div>
                     <div class="ml-4">
                       <div v-if="order.status === 'pending'" class="space-x-2 rtl:space-x-reverse">
@@ -63,12 +69,21 @@
         </div>
       </div>
     </div>
+
+    <OrderDetailsModal
+      :is-open="isModalOpen"
+      :order="selectedOrder"
+      @close="closeModal"
+      @status-updated="handleStatusUpdated"
+    />
   </AdminLayout>
 </template>
 
 <script setup>
 import { useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import OrderDetailsModal from '@/Components/Admin/OrderDetailsModal.vue';
+import { ref } from 'vue';
 
 const props = defineProps({
   orders: {
@@ -77,11 +92,38 @@ const props = defineProps({
   }
 });
 
-const form = useForm({});
+const form = useForm({
+  status: ''
+});
+
+const isModalOpen = ref(false);
+const selectedOrder = ref(null);
+
+const showOrderDetails = (order) => {
+  selectedOrder.value = order;
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+  selectedOrder.value = null;
+};
+
+const handleStatusUpdated = () => {
+  closeModal();
+  // Optionally reload the page or update the order list
+};
 
 const updateOrderStatus = (orderId, status) => {
+  form.status = status;
   form.patch(`/admin/orders/${orderId}`, {
-    status: status
+    onSuccess: () => {
+      // Optionnel : tu peux recharger les données ou afficher une notification ici
+      console.log(`Order #${orderId} updated to ${status}`);
+    },
+    onError: () => {
+      console.error('Erreur lors de la mise à jour du statut');
+    }
   });
 };
 </script>

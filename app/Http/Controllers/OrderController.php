@@ -98,4 +98,49 @@ class OrderController extends Controller
 
         return inertia('Orders/Index', compact('orders'));
     }
+
+    public function adminIndex()
+    {
+        $orders = Order::with(['items.product', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return inertia('Admin/Orders/Index', [
+            'orders' => $orders->items()
+        ]);
+    }
+
+    public function updateStatus(Order $order, Request $request)
+    {
+        \Log::info('Update order status', ['order_id' => $order->id, 'status' => $request->status]);
+        
+        if (!Auth::user()->is_admin) {
+            abort(403);
+        }
+
+        $request->validate([
+            'status' => 'required|string|in:approved,rejected'
+        ]);
+
+        try {
+            $order->update([
+                'status' => $request->status
+            ]);
+
+            if ($request->status === 'approved') {
+                // Delete cart items after order is approved
+                Cart::where('user_id', $order->user_id)
+                    ->whereIn('product_id', $order->items->pluck('product_id'))
+                    ->delete();
+            }
+
+            return redirect()->back()
+                ->with('success', $request->status === 'approved' ? 'تم قبول الطلب بنجاح' : 'تم رفض الطلب بنجاح');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'حدث خطأ أثناء تحديث حالة الطلب');
+        }
+
+        
+    }
 }

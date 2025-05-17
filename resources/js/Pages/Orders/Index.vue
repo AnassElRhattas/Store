@@ -19,13 +19,13 @@
                                         <span class="inline-block px-2 py-1 text-sm rounded"
                                             :class="{
                                                 'bg-yellow-100 text-yellow-800': order.status === 'pending',
-                                                'bg-green-100 text-green-800': order.status === 'completed',
-                                                'bg-red-100 text-red-800': order.status === 'cancelled'
+                                                'bg-green-100 text-green-800': order.status === 'approved',
+                                                'bg-red-100 text-red-800': order.status === 'rejected'
                                             }">
                                             {{ 
                                                 order.status === 'pending' ? 'قيد الانتظار' :
-                                                order.status === 'completed' ? 'مكتمل' :
-                                                order.status === 'cancelled' ? 'ملغي' : order.status 
+                                                order.status === 'approved' ? 'مكتمل' :
+                                                order.status === 'rejected' ? 'ملغي' : order.status 
                                             }}
                                         </span>
                                     </div>

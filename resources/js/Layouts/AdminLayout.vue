@@ -36,7 +36,7 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('admin.products.create')" :active="route().current('admin.products.create')">
                                     إضافة منتج
                                 </NavLink>
-                                <NavLink :href="route('admin.orders')" :active="route().current('admin.orders')">
+                                <NavLink :href="route('admin.orders.index')" :active="route().current('admin.orders.index')">
                                     الطلبات
                                 </NavLink>
                             </div>
@@ -111,7 +111,7 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('admin.products.create')">
                             إضافة منتج
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('admin.orders')" :active="route().current('admin.orders')">
+                        <ResponsiveNavLink :href="route('admin.orders.index')" :active="route().current('admin.orders.index')">
                             الطلبات
                         </ResponsiveNavLink>
                     </div>

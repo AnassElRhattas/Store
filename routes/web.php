@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Admin\OrderPDFController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -46,6 +47,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 });
 
+// Admin Routes
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/orders', [OrderController::class, 'adminIndex'])->name('admin.orders');
+    
+});
+
 Route::get('/dashboard', function () {
     return Inertia::render('Admin/Dashboard');
 })->middleware(['auth', 'verified'])->name('admin.dashboard');
@@ -66,9 +73,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
         Route::get('/products', [ProductController::class, 'adminIndex'])->name('products.index');
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-        Route::get('/orders', function () {
-            return Inertia::render('Admin/Orders/Index');
-        })->name('orders');
+        Route::get('/orders', [OrderController::class, 'adminIndex'])->name('orders.index');
+        Route::patch('/orders/{order}', [OrderController::class, 'updateStatus'])->name('orders.update');
+        Route::post('/orders/{order}/pdf', [OrderPDFController::class, 'generate'])->name('admin.orders.pdf');
     });
 });
 
