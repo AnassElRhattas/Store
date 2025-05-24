@@ -17,12 +17,15 @@
                   <div class="flex items-center justify-between">
                     <div class="flex-1">
                       <h3 class="text-sm font-medium">طلب #{{ order.id }}</h3>
-                      <p class="text-sm text-gray-500">{{ order.user.name }} {{ order.user.surname }}</p>
-                      <p class="text-sm text-gray-500">{{ order.created_at }}</p>
+                      <p class="text-sm text-gray-500">{{ order.customer_name }}</p>
+                      <p class="text-sm text-gray-500">{{ order.customer_phone }}</p>
+                      <p class="text-sm text-gray-500">{{ order.shipping_address }}</p>
+                      <p class="text-sm text-gray-500">{{ formatDate(order.created_at) }}</p>
                       <div class="mt-2">
                         <div v-for="item in order.items" :key="item.id" class="flex justify-between text-sm">
                           <span>{{ item.product.name }}</span>
                           <span>x{{ item.quantity }}</span>
+                          <span>{{ item.price }} درهم</span>
                         </div>
                       </div>
                       <p class="mt-2 text-sm font-medium">المجموع: {{ order.total_amount }} درهم</p>
@@ -92,6 +95,17 @@ const props = defineProps({
   }
 });
 
+// Ajout de la fonction de formatage de date
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString('ar-MA', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
 const form = useForm({
   status: ''
 });
@@ -111,15 +125,14 @@ const closeModal = () => {
 
 const handleStatusUpdated = () => {
   closeModal();
-  // Optionally reload the page or update the order list
+  window.location.reload(); // Recharge la page pour mettre à jour la liste
 };
 
 const updateOrderStatus = (orderId, status) => {
   form.status = status;
   form.patch(`/admin/orders/${orderId}`, {
     onSuccess: () => {
-      // Optionnel : tu peux recharger les données ou afficher une notification ici
-      console.log(`Order #${orderId} updated to ${status}`);
+      window.location.reload(); // Recharge la page après la mise à jour
     },
     onError: () => {
       console.error('Erreur lors de la mise à jour du statut');

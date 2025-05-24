@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -142,5 +144,73 @@ class OrderController extends Controller
         }
 
         
+    }
+
+    public function storeDirect(Request $request)
+    {
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'address' => 'required|string',
+            'products' => 'required|array|min:1'
+        ]);
+    
+        try {
+            DB::beginTransaction();
+    
+            $products = Product::whereIn('id', $request->products)
+                             ->where('is_active', true)
+                             ->get();
+            
+            if ($products->isEmpty()) {
+                return redirect()->back()
+                    ->with('error', 'المنتجات المحددة غير متوفرة');
+            }
+            
+            // Calculer le total comme dans l'ancienne méthode
+            $total = $products->sum('price');
+    
+            // Créer la commande d'abord
+            $order = new Order();
+            $order->user_id = null;
+            $order->total_amount = $total;
+            $order->shipping_address = $request->address;
+            $order->customer_name = $request->first_name . ' ' . $request->last_name;
+            $order->customer_phone = $request->phone;
+            $order->status = 'pending';
+            $order->payment_method = 'cash';
+            $order->save();
+    
+            // Créer les items de commande
+            foreach ($products as $product) {
+                if ($product->stock <= 0) {
+                    throw new \Exception("المنتج {$product->name} غير متوفر في المخزون");
+                }
+
+                // Créer l'item de commande
+                $orderItem = new OrderItem([
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                    'quantity' => 1,
+                    'price' => $product->price
+                ]);
+                $order->items()->save($orderItem);
+
+                // Mettre à jour le stock
+                $product->decrement('stock', 1);
+            }
+    
+            DB::commit();
+            
+            return redirect()->back()
+                ->with('success', 'تم إنشاء طلبك بنجاح');
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Order creation failed: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'حدث خطأ أثناء إنشاء طلبك');
+        }
     }
 }

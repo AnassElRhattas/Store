@@ -29,7 +29,7 @@
                                 <div v-if="errors.description" class="mt-2 text-red-600 text-sm">{{ errors.description }}</div>
                             </div>
 
-                            <!-- Price and Status Group -->
+                            <!-- Price and Stock Group -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Price Input -->
                                 <div class="group relative transition-all duration-300 focus-within:transform focus-within:-translate-y-1">
@@ -43,14 +43,23 @@
                                     <div v-if="errors.price" class="mt-2 text-red-600 text-sm">{{ errors.price }}</div>
                                 </div>
 
-                                <!-- Status Toggle -->
-                                <div class="flex items-center space-x-4 space-x-reverse">
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" v-model="form.is_active" class="sr-only peer">
-                                        <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:right-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-600"></div>
-                                        <span class="mr-3 text-lg font-semibold text-gray-700">متوفر للبيع</span>
-                                    </label>
+                                <!-- Stock Input -->
+                                <div class="group relative transition-all duration-300 focus-within:transform focus-within:-translate-y-1">
+                                    <label for="stock" class="block text-lg font-semibold text-gray-700 mb-2">الكمية المتوفرة</label>
+                                    <input type="number" id="stock" v-model="form.stock"
+                                        class="block w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-300"
+                                        placeholder="0" min="0" />
+                                    <div v-if="errors.stock" class="mt-2 text-red-600 text-sm">{{ errors.stock }}</div>
                                 </div>
+                            </div>
+
+                            <!-- Status Toggle -->
+                            <div class="flex items-center space-x-4 space-x-reverse">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" v-model="form.is_active" class="sr-only peer">
+                                    <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:right-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-600"></div>
+                                    <span class="mr-3 text-lg font-semibold text-gray-700">متوفر للبيع</span>
+                                </label>
                             </div>
 
                             <!-- Image Upload -->
@@ -104,6 +113,7 @@ const form = useForm({
     name: '',
     description: '',
     price: '',
+    stock: 0,
     image: null,
     is_active: true
 })

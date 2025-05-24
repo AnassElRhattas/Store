@@ -33,7 +33,8 @@
                 <!-- Customer Information -->
                 <div class="border-b pb-4">
                   <h4 class="font-semibold mb-2">معلومات العميل</h4>
-                  <p>{{ order.user.name }} {{ order.user.surname }}</p>
+                  <p>{{ order.customer_name }}</p>
+                  <p class="text-gray-600">{{ order.customer_phone }}</p>
                 </div>
 
                 <!-- Shipping Information -->
@@ -50,8 +51,14 @@
                       <span class="font-medium">{{ item.product.name }}</span>
                       <span class="text-gray-500 text-sm"> x{{ item.quantity }}</span>
                     </div>
-                    <span class="font-medium">{{ item.product.price * item.quantity }} درهم</span>
+                    <span class="font-medium">{{ item.price }} درهم</span>
                   </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="border-t pt-4">
+                  <h4 class="font-semibold mb-2">طريقة الدفع</h4>
+                  <p class="text-gray-600">{{ getPaymentMethodText(order.payment_method) }}</p>
                 </div>
 
                 <!-- Order Total -->
@@ -166,5 +173,16 @@ const generatePDF = () => {
       emit('pdfGenerated')
     }
   })
+}
+
+const getPaymentMethodText = (method) => {
+  switch (method) {
+    case 'cash':
+      return 'الدفع عند الاستلام'
+    case 'card':
+      return 'بطاقة بنكية'
+    default:
+      return method
+  }
 }
 </script>

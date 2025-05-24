@@ -24,9 +24,5 @@ class OrderPDFController extends Controller
             'pdf_path' => $path
         ]);
 
-        return response()->json([
-            'message' => 'تم إنشاء ملف PDF بنجاح',
-            'path' => $path
-        ]);
     }
 }

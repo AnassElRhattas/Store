@@ -28,7 +28,7 @@ Route::get('/', function () {
 })->name('user.dashboard');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-
+Route::post('/orders/direct', [OrderController::class, 'storeDirect'])->name('orders.direct');
 // Guest User Routes
 Route::post('/guest/register', [GuestController::class, 'register'])->name('guest.register');
 
@@ -81,3 +81,4 @@ Route::middleware('auth')->group(function () {
 
 
 require __DIR__.'/auth.php';
+

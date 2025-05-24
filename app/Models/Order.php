@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
@@ -15,28 +13,19 @@ class Order extends Model
         'user_id',
         'total_amount',
         'shipping_address',
-        'payment_method',
+        'customer_name',
+        'customer_phone',
         'status',
-        'pdf_path'
+        'payment_method'
     ];
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function items(): HasMany
+    public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function getFormattedTotalAttribute(): string
+    public function user()
     {
-        return number_format($this->total_amount, 2) . ' €';
-    }
-
-    public function getFormattedCreatedAtAttribute(): string
-    {
-        return $this->created_at->format('d/m/Y H:i');
+        return $this->belongsTo(User::class);
     }
 }
