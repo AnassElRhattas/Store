@@ -1,181 +1,216 @@
 <template>
   <ClientLayout>
-    <div class="min-h-screen bg-white">
+    <div class="min-h-screen bg-gradient-to-br from-indigo-50/20 via-white to-indigo-50/10">
+      <!-- Navigation -->
+      <nav class="bg-white/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4 py-3">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-4">
+              <div class="relative group cursor-pointer">
+                <img src="/images/store_image.jpg" alt="متجر حميد" class="h-10 w-10 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform">
+                <div class="absolute inset-0 rounded-xl ring-2 ring-indigo-200/50"></div>
+              </div>
+              <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">متجر حميد</h1>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-gray-500">{{ selectedProducts.length }} منتجات مختارة</span>
+              <button 
+                @click="openOrderForm"
+                :disabled="selectedProducts.length === 0"
+                class="group flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-all"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <span>سلة التسوق</span>
+                <span class="px-2 py-0.5 bg-indigo-500 rounded-lg text-xs">{{ selectedProducts.length }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       <!-- Hero Section -->
-      <div class="relative h-[600px] overflow-hidden">
-        <div class="absolute inset-0">
-          <img src="/images/store_image.jpg" alt="Store Background" class="w-full h-full object-cover">
-          <div class="absolute inset-0 bg-black/50"></div>
-        </div>
-        <div class="relative h-full flex items-center">
-          <div class="container mx-auto px-4">
-            <div class="max-w-3xl mx-auto text-center">
-              <h1 class="text-6xl font-bold text-white mb-6">متجر حميد</h1>
-              <p class="text-2xl text-white/90 mb-8">تسوق بسهولة واحصل على أفضل المنتجات</p>
-              <div class="relative max-w-xl mx-auto">
-                <input 
-                  type="search"
-                  placeholder="ابحث عن منتجاتك المفضلة..."
-                  class="w-full px-6 py-4 rounded-lg text-lg bg-white/95 backdrop-blur-sm border-0 focus:ring-2 focus:ring-green-500"
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Categories Section -->
-      <div class="container mx-auto px-4 -mt-20 relative z-10 mb-24">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 flex items-center justify-center rounded-full bg-green-100">
-                <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      <div class="bg-gradient-to-b from-white to-indigo-50/30 border-b border-indigo-100/50">
+        <div class="container mx-auto px-4 py-12">
+          <div class="max-w-2xl mx-auto text-center space-y-4">
+            <h2 class="text-3xl font-bold text-gray-900">اكتشف منتجاتنا المميزة</h2>
+            <p class="text-gray-600">اختر من بين مجموعة واسعة من المنتجات عالية الجودة</p>
+            <div class="relative mt-8">
+              <input 
+                v-model="searchQuery"
+                type="search"
+                placeholder="ابحث عن المنتجات..."
+                class="w-full px-6 py-3 rounded-xl bg-white border-2 border-indigo-100 focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100/50 text-base shadow-sm"
+              >
+              <button class="absolute left-4 top-1/2 -translate-y-1/2 p-2 text-indigo-400 hover:text-indigo-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-gray-900">منتجات جديدة</h3>
-                <p class="text-gray-600 text-sm">اكتشف أحدث المنتجات</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 flex items-center justify-center rounded-full bg-yellow-100">
-                <svg class="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                </svg>
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-gray-900">الأكثر مبيعاً</h3>
-                <p class="text-gray-600 text-sm">المنتجات المفضلة</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 flex items-center justify-center rounded-full bg-red-100">
-                <svg class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                </svg>
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-gray-900">عروض خاصة</h3>
-                <p class="text-gray-600 text-sm">تخفيضات حصرية</p>
-              </div>
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Products Section -->
-      <div class="mb-16 p-4">
-        <div class="flex justify-between items-center mb-12">
-          <h2 class="text-4xl font-bold text-gray-900">منتجاتنا المميزة</h2>
+      <!-- Categories -->
+      <div class="container mx-auto px-4 py-8">
+        <div class="flex overflow-x-auto gap-3 pb-4 scrollbar-hide">
           <button 
-            @click="openOrderForm"
-            :disabled="selectedProducts.length === 0"
-            class="px-8 py-4 bg-blue-900 text-white text-lg rounded-full hover:bg-blue-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+            v-for="category in categories" 
+            :key="category.id"
+            @click="selectCategory(category.id)"
+            :class="[
+              'flex-none px-5 py-2.5 text-sm font-medium rounded-xl transition-all',
+              selectedCategory === category.id 
+                ? 'bg-indigo-600 text-white shadow-sm' 
+                : 'bg-white text-gray-600 border-2 border-indigo-100 hover:bg-indigo-50'
+            ]"
           >
-            طلب المنتجات ({{ selectedProducts.length }})
+            {{ category.name }}
           </button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          <div v-for="product in products" :key="product.id" 
-               class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100">
-            <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+        <!-- Products Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-8">
+          <div v-for="product in filteredProducts" :key="product.id" 
+               class="group bg-white rounded-xl border-2 border-indigo-100/50 hover:border-indigo-200 hover:shadow-lg transition-all duration-300">
+            <div class="relative aspect-square overflow-hidden rounded-t-xl">
               <img :src="'/storage/' + product.image" :alt="product.name" 
-                   class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div class="absolute top-4 left-4 z-10">
+                   class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div class="absolute top-3 left-3">
                 <input 
                   type="checkbox" 
                   :value="product.id"
                   v-model="selectedProducts"
-                  class="w-6 h-6 rounded-full border-2 border-blue-500 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                ></div>
-                <div class="absolute bottom-4 right-4 z-10">
-                  <span class="px-4 py-2 rounded-full text-sm font-medium bg-white/90 text-gray-900">
-                    {{ product.stock > 0 ? 'متوفر' : 'نفذ المخزون' }}
-                  </span>
-                </div>
+                  :disabled="product.stock <= 0"
+                  class="w-5 h-5 rounded-lg border-2 border-indigo-200 text-indigo-600 focus:ring-2 focus:ring-indigo-400/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
               </div>
-
-              <div class="p-6">
-                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ product.name }}</h3>
-                <p class="text-gray-600 mb-4 line-clamp-2">{{ product.description }}</p>
-                <div class="flex items-center justify-between">
-                  <span class="text-2xl font-bold text-blue-900">{{ product.price }} درهم</span>
-                  <span class="text-sm bg-blue-50 text-blue-900 px-3 py-1 rounded-full">المخزون: {{ product.stock }}</span>
-                </div>
+              <div class="absolute top-3 right-3">
+                <span class="px-3 py-1 rounded-lg text-xs font-medium bg-white/95 shadow-sm backdrop-blur-sm"
+                      :class="product.stock > 0 ? 'text-emerald-600' : 'text-rose-600'">
+                  {{ product.stock > 0 ? 'متوفر' : 'نفذ' }}
+                </span>
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="text-base font-medium text-gray-900 mb-1">{{ product.name }}</h3>
+              <p class="text-sm text-gray-500 mb-3 line-clamp-2">{{ product.description }}</p>
+              <div class="flex items-center justify-between">
+                <span class="text-lg font-bold text-indigo-600">{{ product.price }} درهم</span>
+                <span class="text-xs bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-lg font-medium">{{ product.stock }}</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Order Form Modal -->
-      <div v-if="showOrderForm" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl">
-          <div class="flex justify-between items-center mb-10">
-            <h2 class="text-3xl font-bold text-gray-900">معلومات الطلب</h2>
-            <button @click="showOrderForm = false" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          <form @submit.prevent="submitOrder" class="space-y-8">
-            <div class="space-y-6">
-              <div>
-                <label class="block text-lg font-medium text-gray-700 mb-3">الاسم</label>
-                <input type="text" v-model="orderForm.first_name" required
-                       class="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg">
-              </div>
-              <div>
-                <label class="block text-lg font-medium text-gray-700 mb-3">اللقب</label>
-                <input type="text" v-model="orderForm.last_name" required
-                       class="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg">
-              </div>
-              <div>
-                <label class="block text-lg font-medium text-gray-700 mb-3">رقم الهاتف</label>
-                <input type="tel" v-model="orderForm.phone" required
-                       class="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg">
-              </div>
-              <div>
-                <label class="block text-lg font-medium text-gray-700 mb-3">العنوان</label>
-                <textarea v-model="orderForm.address" required rows="4"
-                         class="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg"></textarea>
-              </div>
-            </div>
-
-            <div class="pt-6">
-              <button type="submit" 
-                      class="w-full px-8 py-4 text-xl font-medium text-white bg-green-600 rounded-xl hover:bg-green-700 transition-colors duration-300 shadow-lg hover:shadow-xl">
-                تأكيد الطلب
-              </button>
-            </div>
-          </form>
+        <!-- Empty State -->
+        <div v-if="filteredProducts.length === 0" class="text-center py-12">
+          <div class="text-gray-500">لا توجد منتجات متطابقة مع بحثك</div>
         </div>
       </div>
-    
+    </div>
+
+    <!-- Order Form Modal -->
+    <TransitionRoot appear :show="showOrderForm" as="template">
+      <Dialog as="div" @close="showOrderForm = false" class="relative z-50">
+        <TransitionChild
+          enter="duration-300 ease-out"
+          enter-from="opacity-0"
+          enter-to="opacity-100"
+          leave="duration-200 ease-in"
+          leave-from="opacity-100"
+          leave-to="opacity-0"
+        >
+          <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+        </TransitionChild>
+
+        <div class="fixed inset-0 overflow-y-auto">
+          <div class="flex min-h-full items-center justify-center p-4">
+            <TransitionChild
+              enter="duration-300 ease-out"
+              enter-from="opacity-0 scale-95"
+              enter-to="opacity-100 scale-100"
+              leave="duration-200 ease-in"
+              leave-from="opacity-100 scale-100"
+              leave-to="opacity-0 scale-95"
+            >
+              <DialogPanel class="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="p-6">
+                  <h3 class="text-xl font-bold text-gray-900 mb-4">معلومات الطلب</h3>
+                  <form @submit.prevent="submitOrder" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">الاسم الأول</label>
+                        <input
+                          v-model="orderForm.first_name"
+                          type="text"
+                          required
+                          class="w-full px-4 py-2 rounded-lg border-2 border-indigo-100 focus:border-indigo-300 focus:ring focus:ring-indigo-100/50"
+                        >
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">اسم العائلة</label>
+                        <input
+                          v-model="orderForm.last_name"
+                          type="text"
+                          required
+                          class="w-full px-4 py-2 rounded-lg border-2 border-indigo-100 focus:border-indigo-300 focus:ring focus:ring-indigo-100/50"
+                        >
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
+                      <input
+                        v-model="orderForm.phone"
+                        type="tel"
+                        required
+                        pattern="[0-9]{10}"
+                        class="w-full px-4 py-2 rounded-lg border-2 border-indigo-100 focus:border-indigo-300 focus:ring focus:ring-indigo-100/50"
+                      >
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">العنوان</label>
+                      <textarea
+                        v-model="orderForm.address"
+                        required
+                        rows="3"
+                        class="w-full px-4 py-2 rounded-lg border-2 border-indigo-100 focus:border-indigo-300 focus:ring focus:ring-indigo-100/50"
+                      ></textarea>
+                    </div>
+                    <div class="pt-4">
+                      <button
+                        type="submit"
+                        class="w-full bg-indigo-600 text-white py-3 rounded-xl font-medium hover:bg-indigo-700 transition-colors"
+                      >
+                        تأكيد الطلب
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </DialogPanel>
+            </TransitionChild>
+          </div>
+        </div>
+      </Dialog>
+    </TransitionRoot>
   </ClientLayout>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue';
 import ClientLayout from '@/Layouts/ClientLayout.vue';
 
-defineProps({
-  products: Array
+const props = defineProps({
+  products: Array,
 });
 
+const searchQuery = ref('');
+const selectedCategory = ref(null);
 const selectedProducts = ref([]);
 const showOrderForm = ref(false);
 const orderForm = ref({
@@ -184,6 +219,34 @@ const orderForm = ref({
   phone: '',
   address: '',
 });
+
+const categories = [
+  { id: null, name: 'جميع المنتجات' },
+  { id: 'new', name: 'منتجات جديدة' },
+  { id: 'popular', name: 'الأكثر مبيعاً' },
+  { id: 'special', name: 'عروض خاصة' },
+];
+
+const filteredProducts = computed(() => {
+  let filtered = props.products;
+  
+  if (searchQuery.value) {
+    filtered = filtered.filter(product => 
+      product.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+  }
+
+  if (selectedCategory.value) {
+    // Add category filtering logic here
+  }
+
+  return filtered;
+});
+
+const selectCategory = (categoryId) => {
+  selectedCategory.value = categoryId;
+};
 
 const openOrderForm = () => {
   if (selectedProducts.value.length > 0) {
@@ -199,7 +262,6 @@ const submitOrder = () => {
     onSuccess: () => {
       showOrderForm.value = false;
       selectedProducts.value = [];
-      // Réinitialiser le formulaire
       orderForm.value = {
         first_name: '',
         last_name: '',
@@ -207,9 +269,6 @@ const submitOrder = () => {
         address: '',
       };
     },
-    onError: (errors) => {
-      console.error('Order submission failed:', errors);
-    }
   });
 };
 </script>
